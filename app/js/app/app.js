@@ -44,12 +44,48 @@ define([
   // });
 
   var EmployeeModel = Backbone.Model.extend({
-  defaults: {
-    firstName: "",
-    lastName: "",
-    position: ""
-  }
-});
+    defaults: {
+      firstName: "",
+      lastName: "",
+      position: ""
+    }
+  });
+
+  var EmployeeView = Backbone.View.extend({
+    //el: ".hello",
+    template: employeeTmpl,
+    initialize: function () {
+      this.listenTo(this.model, "change", this.render);
+    },
+    render: function () {
+      this.$el.html(this.template(this.model.toJSON()));
+      return this;
+    }
+  });
+
+  var EmployeesCollection = Backbone.Collection.extend({
+    model: EmployeeModel
+  });
+
+  var EmployeesView = Backbone.View.extend({
+    el: ".hello",
+    template: employeeTmpl,
+    initialize: function () {
+      this.listenTo(this.collection, "change", this.render);
+    },
+    render: function () {
+      var self = this;
+
+      self.$el.empty();
+      this.collection.each(function (model) {
+        var employee = /* SOMETHING - BIND MODEL TO A VIEW */;
+        employee.render();
+        self.$el.append(employee.$el);
+      });
+
+      return this;
+    }
+  });
 
   // Backbone.js View
   // //
@@ -100,18 +136,43 @@ define([
   // on page load.
 
   $(function () {
-    var denz = new EmployeeModel({
-        firstName: "Ryan",
-        lastName: "Romer",
-        position: "Coder"
+    var denzModel = new EmployeeModel({
+        firstName: "Dennis",
+        lastName: "Zzzz",
+        position: "CEO"
+      });
+
+    var col = new EmployeesCollection([
+      new EmployeeModel({
+        firstName: "Dennis",
+        lastName: "Zzzz",
+        position: "CEO"
+      }),
+      new EmployeeModel({
+        firstName: "Bob",
+        lastName: "Smith",
+        position: "IT Manager"
+      })
+    ]);
+
+    var view = new EmployeesView({
+      collection: col
     });
 
-    var renderHtml = employeeTmpl(denz.toJSON());
-    console.log("TEMPLATE", renderHtml);
+    view.render();
+    view.collection.at(0).set("position", "the boss");
+  });
+
+
+
+    // var renderHtml = employeeTmpl(denz.toJSON());
+    // $("body").append($(renderHtml));
+    // window.console.log("TEMPLATE", renderHtml);
 
 
     // denzEmployee.on("change", function () {
-    //   console.log("EMPLOYEE: " + denzEmployee.get("firstName") + " " + denzEmployee.get("lastName"));
+    //   console.log("EMPLOYEE: " +
+    // denzEmployee.get("firstName") + " " + denzEmployee.get("lastName"));
     // });
     //
     // denzEmployee.set("firstName", "Ryan");
@@ -123,7 +184,7 @@ define([
     // //    lst name "DFDSFDS##$FE"
     // // });
 
-  });
+
 
   // $(function () {
   //   // Now instantiate our view and render!
