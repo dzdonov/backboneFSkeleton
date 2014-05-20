@@ -5,5 +5,5 @@
  * are run by our infrastructure.
  */
 define([
-  "spec/hello.spec"
+  "spec/models/employee.spec"
 ]);

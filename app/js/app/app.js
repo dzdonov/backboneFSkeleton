@@ -11,6 +11,8 @@
 define([
   "jquery",
   "backbone",
+  "app/models/employee",
+  "app/collections/employees",
 
   // Import and compile a HBS template.
   // For real application, remove this import (and the real file) and replace
@@ -23,6 +25,8 @@ define([
 ], function (
   $,
   Backbone,
+  EmployeeModel,
+  EmployeeCollection,
   employeeTmpl
 ) {
   "use strict";
@@ -43,13 +47,15 @@ define([
   //   }
   // });
 
-  var EmployeeModel = Backbone.Model.extend({
-    defaults: {
-      firstName: "",
-      lastName: "",
-      position: ""
-    }
-  });
+  model: new EmployeeModel();
+
+  // var EmployeeModel = Backbone.Model.extend({
+  //   defaults: {
+  //     firstName: "",
+  //     lastName: "",
+  //     position: ""
+  //   }
+  // });
 
   var EmployeeView = Backbone.View.extend({
     //el: ".hello",
@@ -74,17 +80,24 @@ define([
       this.listenTo(this.collection, "change", this.render);
     },
     render: function () {
-      var self = this;
+      var view = this;
 
-      self.$el.empty();
+      view.$el.empty();
       this.collection.each(function (model) {
-        var employee = /* SOMETHING - BIND MODEL TO A VIEW */;
-        employee.render();
-        self.$el.append(employee.$el);
+        view.$el.append(view.template(model.toJSON()));
       });
-
       return this;
     }
+
+  //   self.$el.empty();
+  //   this.collection.each(function (model) {
+  //     var employee = /* SOMETHING - BIND MODEL TO A VIEW */;
+  //     employee.render();
+  //     self.$el.append(employee.$el);
+  //   });
+  //
+  //   return this;
+  // }
   });
 
   // Backbone.js View
